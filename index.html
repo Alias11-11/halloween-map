@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171126">
+  <title>Trick or Treat — Хэллоуин в Земуне</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #171126;
+      --card: #241b35;
+      --card-light: #302443;
+      --text: #fff8ed;
+      --muted: #c7bbd4;
+      --orange: #ff9f43;
+      --purple: #c084fc;
+      --green: #9ee493;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 15% 5%, #432456 0, transparent 35%),
+        radial-gradient(ellipse at 90% 40%, #302042 0, transparent 35%),
+        var(--background);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 48px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 6vw, 56px);
+      border: 1px solid #ffffff20;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #342042, #20182e 70%);
+      box-shadow: 0 18px 60px #0005;
+    }
+
+    .hero::after {
+      position: absolute;
+      right: 28px;
+      bottom: -30px;
+      content: "🎃";
+      font-size: clamp(90px, 18vw, 180px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--orange);
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 700px;
+      margin: 0;
+      font-size: clamp(2.2rem, 7vw, 4.6rem);
+      line-height: 1.04;
+    }
+
+    .hero p:last-child {
+      max-width: 620px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.65;
+    }
+
+    .section {
+      margin-top: 32px;
+    }
+
+    .section-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    .section-note {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .map-card,
+    .checklist-card,
+    .safety-card {
+      border: 1px solid #ffffff1c;
+      border-radius: 22px;
+      background: #241b35eF;
+      box-shadow: 0 12px 36px #0003;
+    }
+
+    .map-card {
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    .map-frame {
+      width: 100%;
+      min-height: 471px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #1d1727;
+    }
+
+    /* Подстраиваем карту конструктора под ширину блока. */
+    .map-frame iframe {
+      display: block;
+      width: 100% !important;
+      max-width: 100%;
+      min-height: 471px;
+      border: 0;
+    }
+
+    .checklist-card {
+      padding: clamp(18px, 4vw, 28px);
+    }
+
+    .progress-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 16px 0 10px;
+      color: var(--muted);
+    }
+
+    .progress-count {
+      color: var(--orange);
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #ffffff18;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--orange), var(--purple));
+      transition: width 180ms ease;
+    }
+
+    .address-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      gap: 10px;
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .address-item {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid #ffffff12;
+      border-radius: 14px;
+      background: var(--card-light);
+      transition: background 150ms ease, border-color 150ms ease;
+    }
+
+    .address-item:has(input:checked) {
+      border-color: #9ee49370;
+      background: #263a32;
+    }
+
+    .address-item input {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .address-item label {
+      flex: 1;
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .address-icon {
+      font-size: 1.4rem;
+    }
+
+    .reset-button {
+      margin-top: 18px;
+      padding: 10px 15px;
+      border: 1px solid #ffffff30;
+      border-radius: 10px;
+      color: var(--text);
+      background: transparent;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .reset-button:hover {
+      background: #ffffff12;
+    }
+
+    .safety-card {
+      padding: 20px 22px;
+      border-color: #ff9f4340;
+      background: #33243a;
+    }
+
+    .safety-card h2 {
+      margin-bottom: 8px;
+      color: var(--orange);
+      font-size: 1.25rem;
+    }
+
+    .safety-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    footer {
+      padding-top: 28px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        width: min(100% - 20px, 1100px);
+        padding-top: 10px;
+      }
+
+      .hero {
+        border-radius: 20px;
+      }
+
+      .map-frame,
+      .map-frame iframe {
+        min-height: 400px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">🎃 31 октября · Земун · Белград</p>
+      <h1>Trick or Treat в Земуне!</h1>
+      <p>
+        Отправляйтесь за сладостями по хэллоуинским адресам района.
+        Откройте карту, отмечайте пройденные точки и не забудьте взять с собой взрослого.
+      </p>
+    </header>
+
+    <section class="section" aria-labelledby="map-title">
+      <div class="section-heading">
+        <h2 id="map-title">🗺️ Карта маршрута</h2>
+        <p class="section-note">Нажмите на карту, чтобы изучить точки.</p>
+      </div>
+
+      <div class="map-card">
+        <div class="map-frame">
+          <script
+            type="text/javascript"
+            charset="utf-8"
+            async
+            src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ac89a7cf67a91da80a736927229210095e090f0e87671ed350bac137e06c89efa&amp;width=100%25&amp;height=471&amp;lang=ru_RU&amp;scroll=true">
+          </script>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="checklist-title">
+      <div class="checklist-card">
+        <div class="section-heading">
+          <h2 id="checklist-title">🍬 Чек-лист сладкоежки</h2>
+          <p class="section-note">Отмечайте адреса, которые уже посетили.</p>
+        </div>
+
+        <div class="progress-row" aria-live="polite">
+          <span>Пройдено адресов</span>
+          <span class="progress-count"><span id="completed">0</span> из 10</span>
+        </div>
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-label="Пройдено адресов"
+          aria-valuemin="0"
+          aria-valuemax="10"
+          aria-valuenow="0"
+          id="progress-track"
+        >
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <ul class="address-list" id="address-list">
+          <li class="address-item">
+            <input type="checkbox" id="stop-1">
+            <label for="stop-1">Pregrevica 197</label>
+            <span class="address-icon" aria-hidden="true">🕷️</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-2">
+            <label for="stop-2">Cara Dusana 232</label>
+            <span class="address-icon" aria-hidden="true">🦇</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-2">
+            <label for="stop-2">Cara Dusana 220a</label>
+            <span class="address-icon" aria-hidden="true">🦇</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-3">
+            <label for="stop-3">Sumadijska 7</label>
+            <span class="address-icon" aria-hidden="true">🎃</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-4">
+            <label for="stop-4">Cara Dusana 186</label>
+            <span class="address-icon" aria-hidden="true">🧛</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-5">
+            <label for="stop-5">Trscanska 48</label>
+            <span class="address-icon" aria-hidden="true">👻</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-6">
+            <label for="stop-6">Predraga Lakovica 16</label>
+            <span class="address-icon" aria-hidden="true">🧙</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-7">
+            <label for="stop-7">Novogradska 65b</label>
+            <span class="address-icon" aria-hidden="true">🕸️</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-8">
+            <label for="stop-8">22 Oktobra 1</label>
+            <span class="address-icon" aria-hidden="true">🦇</span>
+          </li>
+          <li class="address-item">
+            <input type="checkbox" id="stop-9">
+            <label for="stop-9">Kestenovog lista 4</label>
+            <span class="address-icon" aria-hidden="true">🎃</span>
+          </li>
+        </ul>
+
+        <button class="reset-button" id="reset-button" type="button">
+          Сбросить отметки
+        </button>
+      </div>
+    </section>
+
+    <section class="section safety-card" aria-labelledby="safety-title">
+      <h2 id="safety-title">🦉 Немного о безопасности</h2>
+      <p>
+        Ходите группой и вместе со взрослым, переходите дорогу только по переходам,
+        а угощения берите только у знакомых или согласившихся участвовать хозяев.
+        Сладости лучше проверить вместе со взрослым.
+      </p>
+    </section>
+
+    <footer>
+      Хорошей охоты за сладостями и счастливого Хэллоуина! 👻
+    </footer>
+  </main>
+
+  <script>
+    const checkboxes = document.querySelectorAll('#address-list input[type="checkbox"]');
+    const completedLabel = document.getElementById('completed');
+    const progressBar = document.getElementById('progress-bar');
+    const progressTrack = document.getElementById('progress-track');
+    const resetButton = document.getElementById('reset-button');
+    const storageKey = 'zemun-halloween-checklist';
+
+    function updateProgress() {
+      const completed = [...checkboxes].filter((checkbox) => checkbox.checked).length;
+      const total = checkboxes.length;
+      const percentage = total ? (completed / total) * 100 : 0;
+
+      completedLabel.textContent = completed;
+      progressBar.style.width = `${percentage}%`;
+      progressTrack.setAttribute('aria-valuenow', completed);
+
+      const savedState = [...checkboxes].map((checkbox) => checkbox.checked);
+      localStorage.setItem(storageKey, JSON.stringify(savedState));
+    }
+
+    try {
+      const savedState = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      checkboxes.forEach((checkbox, index) => {
+        checkbox.checked = Boolean(savedState[index]);
+      });
+    } catch {
+      localStorage.removeItem(storageKey);
+    }
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', updateProgress);
+    });
+
+    resetButton.addEventListener('click', () => {
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+      updateProgress();
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>
